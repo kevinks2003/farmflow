@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Track Order{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-3">Tracking Order #{{ order.id }}</h4>
+
+    <p><strong>Crop(s):</strong>
+      {% for item in order.items.all %}
+        {{ item.crop.name }} ({{ item.quantity }} kg){% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+
+    <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+    <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+    <hr>
+
+    {% if transport %}
+      <h5>Status: 
+        <span class="badge 
+          {% if transport.status == 'assigned' %}bg-info
+          {% elif transport.status == 'picked_up' %}bg-warning text-dark
+          {% elif transport.status == 'in_transit' %}bg-primary
+          {% elif transport.status == 'delivered' %}bg-success
+          {% endif %}">
+          {{ transport.status|title }}
+        </span>
+      </h5>
+      <p>Last updated: {{ transport.updated_at|date:"M d, Y H:i" }}</p>
+
+      <!-- Progress bar -->
+      <div class="progress mt-3">
+        <div class="progress-bar 
+          {% if transport.status == 'assigned' %}bg-info
+          {% elif transport.status == 'picked_up' %}bg-warning
+          {% elif transport.status == 'in_transit' %}bg-primary
+          {% elif transport.status == 'delivered' %}bg-success
+          {% endif %}" 
+          role="progressbar"
+          style="width:
+          {% if transport.status == 'assigned' %}25
+          {% elif transport.status == 'picked_up' %}50
+          {% elif transport.status == 'in_transit' %}75
+          {% elif transport.status == 'delivered' %}100
+          {% endif %}%">
+        </div>
+      </div>
+
+      <p class="mt-2"><strong>Transporter:</strong> {{ transport.transporter.username }}</p>
+      {% if transport.vehicle_details %}
+        <p><strong>Vehicle:</strong> {{ transport.vehicle_details }}</p>
+      {% endif %}
+
+    {% else %}
+      <p class="text-danger">No transporter assigned yet.</p>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "buyer_base.html" %}
+{% block title %}Demo Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="glass mx-auto p-4 rounded-4 shadow-lg" style="max-width: 500px;">
+    <h3 class="text-center text-success mb-4">💳 Demo Payment</h3>
+
+    <p class="text-center text-light">Order <strong>#{{ order.id }}</strong></p>
+    <h5 class="text-center mb-4">Amount: <span class="fw-bold text-success">₹{{ amount }}</span></h5>
+
+    <form method="post" action="{% url 'fake_payment_confirm' order.id %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label text-light">Card Number</label>
+        <input type="text" class="form-control bg-dark text-light border-0" placeholder="1234 5678 9012 3456" required>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-light">Expiry Date</label>
+          <input type="text" class="form-control bg-dark text-light border-0" placeholder="MM/YY" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-light">CVV</label>
+          <input type="password" class="form-control bg-dark text-light border-0" placeholder="123" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-light">UPI ID (Optional)</label>
+        <input type="text" class="form-control bg-dark text-light border-0" placeholder="example@upi">
+      </div>
+
+      <button type="submit" class="btn btn-custom w-100 btn-lg mt-3">Pay Now</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

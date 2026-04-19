@@ -1,0 +1,56 @@
+{% extends "buyer_base.html" %}
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 fw-bold text-light">🛒 My Cart</h2>
+
+  {% if cart_items %}
+  <div class="glass table-responsive p-3 rounded-3 shadow-lg">
+    <table class="table table-dark table-hover align-middle mb-0">
+      <thead class="table-success text-dark">
+        <tr>
+          <th>Crop</th>
+          <th>Farmer</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td>{{ item.crop.name }}</td>
+          <td>{{ item.crop.farmer.username }}</td>
+          <td>₹{{ item.crop.price }}</td>
+          <td>
+            <form method="post" action="{% url 'update_cart_item' item.id %}" class="d-flex align-items-center">
+              {% csrf_token %}
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.crop.quantity }}" class="form-control form-control-sm me-2 text-center bg-dark text-light border-0" style="width:80px;">
+              <button type="submit" class="btn btn-custom btn-sm">Update</button>
+            </form>
+          </td>
+          <td class="fw-bold">₹{{ item.total_price }}</td>
+          <td>
+            <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Remove</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <h4 class="fw-bold text-success">Total: ₹{{ total_price }}</h4>
+    <a href="{% url 'checkout' %}" class="btn btn-custom btn-lg">Proceed to Checkout</a>
+  </div>
+
+  {% else %}
+    <div class="empty-state text-center text-muted mt-5">
+      <i class="bi bi-emoji-frown" style="font-size:2rem;"></i>
+      <p class="mt-2">Your cart is empty. Start shopping!</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

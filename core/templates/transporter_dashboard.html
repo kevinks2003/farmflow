@@ -1,0 +1,168 @@
+{% extends "transporter_base.html" %}
+
+{% block title %}Transporter Dashboard{% endblock %}
+
+{% block content %}
+<div class="glass">
+  <div class="page-hero">
+    <div>
+      <h2 class="hero-title text-light">Transporter Dashboard</h2>
+      <p class="hero-sub text-light">Manage orders, claim deliveries, and update status in real-time.</p>
+    </div>
+
+    <div class="d-flex align-items-center">
+      <div class="me-3 fw-semibold" style="color:#aef9c7;">
+        🚩 District: <span class="text-white fw-bold">{{ my_district }}</span>
+      </div>
+      <a href="{% url 'logout' %}" class="btn btn-accent">Logout</a>
+    </div>
+  </div>
+
+  <!-- Available Orders -->
+  <div class="transport-card mb-4">
+    <div class="card-halo"></div>
+    <div class="transport-card-inner">
+      <div class="inner-content">
+        <h4 class="mb-3 fw-bold" style="color:#fff;">🚚 Available Orders</h4>
+
+        {% if available_orders %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle text-light">
+            <thead style="background:rgba(255,255,255,0.08); color:#aef9c7;">
+              <tr>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Place</th>
+                <th>District</th>
+                <th>Crops</th>
+                <th style="width:120px">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in available_orders %}
+              <tr>
+                <td class="text-white">#{{ order.id }}</td>
+                <td>
+                  <strong class="text-white">{{ order.buyer.username }}</strong><br>
+                  <span class="text-muted"><i class="bi bi-telephone"></i> {{ order.buyer.phone }}</span>
+                </td>
+                <td class="text-light">{{ order.buyer.place }}</td>
+                <td class="text-light">{{ order.buyer.district }}</td>
+                <td>
+                  {% for item in order.items.all %}
+                    <span class="badge bg-success text-dark">{{ item.crop.name }} ({{ item.quantity }})</span>
+                  {% endfor %}
+                </td>
+                <td>
+                  <form method="post" action="{% url 'claim_order' order.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-accent w-100">Claim</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No available orders in your district.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- My Assigned Orders -->
+  <div class="transport-card">
+    <div class="card-halo"></div>
+    <div class="transport-card-inner">
+      <div class="inner-content">
+        <h4 class="mb-3 fw-bold text-light">📦 My Assigned Orders</h4>
+
+        {% if my_transports %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle text-light">
+            <thead style="background:rgba(255,255,255,0.08); color:#aef9c7;">
+              <tr>
+                <th>Order ID</th>
+                <th>Buyer</th>
+                <th>Place</th>
+                <th>District</th>
+                <th>Crops</th>
+                <th>Status</th>
+                <th>Update</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in my_transports %}
+              <tr>
+                <td>#{{ t.order.id }}</td>
+                <td>
+                  <strong class="text-white">{{ t.order.buyer.username }}</strong><br>
+                  <span class="text-muted"><i class="bi bi-telephone"></i> {{ t.order.buyer.phone }}</span>
+                </td>
+                <td>{{ t.order.buyer.place }}</td>
+                <td>{{ t.order.buyer.district }}</td>
+                <td>
+                  {% for item in t.order.items.all %}
+                    <span class="badge bg-info text-dark">{{ item.crop.name }} ({{ item.quantity }})</span><br>
+                  {% endfor %}
+                </td>
+                <td>
+                  {% if t.status == "assigned" %}
+                    <span class="badge bg-secondary">Assigned</span>
+                  {% elif t.status == "picked_up" %}
+                    <span class="badge bg-primary">Picked Up</span>
+                  {% elif t.status == "in_transit" %}
+                    <span class="badge bg-warning text-dark">In Transit</span>
+                  {% elif t.status == "delivered" %}
+                    <span class="badge bg-success">Delivered</span>
+                  {% endif %}
+
+                  <div class="progress mt-1" style="height: 6px;">
+                    {% if t.status == "assigned" %}
+                      <div class="progress-bar bg-secondary" style="width: 25%"></div>
+                    {% elif t.status == "picked_up" %}
+                      <div class="progress-bar bg-primary" style="width: 50%"></div>
+                    {% elif t.status == "in_transit" %}
+                      <div class="progress-bar bg-warning" style="width: 75%"></div>
+                    {% elif t.status == "delivered" %}
+                      <div class="progress-bar bg-success" style="width: 100%"></div>
+                    {% endif %}
+                  </div>
+                </td>
+                <td>
+                  <form method="post" action="{% url 'update_transport_status' t.id %}">
+                    {% csrf_token %}
+                    <select name="status" class="form-select form-select-sm mb-1 bg-dark text-light">
+                      <option value="assigned" {% if t.status == "assigned" %}selected{% endif %}>Assigned</option>
+                      <option value="picked_up" {% if t.status == "picked_up" %}selected{% endif %}>Picked Up</option>
+                      <option value="in_transit" {% if t.status == "in_transit" %}selected{% endif %}>In Transit</option>
+                      <option value="delivered" {% if t.status == "delivered" %}selected{% endif %}>Delivered</option>
+                    </select>
+                    <button class="btn btn-sm btn-accent w-100" type="submit">Update</button>
+                  </form>
+                </td>
+                <td>
+                  {% if t.order.payment_method == "COD" and not t.order.is_paid %}
+                    <form method="post" action="{% url 'collect_cod_payment' t.id %}">
+                      {% csrf_token %}
+                      <button class="btn btn-sm btn-warning w-100">Collect COD</button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted">N/A</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <p class="text-muted text-center">You have no assigned transports yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

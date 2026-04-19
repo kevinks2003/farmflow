@@ -1,0 +1,64 @@
+{% extends "farmer_base.html" %}
+
+{% block title %}Add Crop | FarmFlow{% endblock %}
+
+{% block content %}
+<div class="glass mx-auto" style="max-width:820px;">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0">Add New Crop</h3>
+    <small class="text-muted">Create listing to show in buyer listings</small>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+          <div class="text-danger small">{{ form.name.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Quantity (kg)</label>
+        {{ form.quantity }}
+        {% if form.quantity.errors %}
+          <div class="text-danger small">{{ form.quantity.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Price (₹/kg)</label>
+        {{ form.price }}
+        {% if form.price.errors %}
+          <div class="text-danger small">{{ form.price.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+          <div class="text-danger small">{{ form.description.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Image</label>
+        {{ form.image }}
+        {% if form.image.errors %}
+          <div class="text-danger small">{{ form.image.errors|striptags }}</div>
+        {% endif %}
+      </div>
+
+      <div class="col-12 d-flex gap-2 mt-1">
+        <button type="submit" class="btn btn-success btn-glow">
+          <i class="bi bi-plus-circle"></i> Add Crop
+        </button>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

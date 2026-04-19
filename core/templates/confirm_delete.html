@@ -1,0 +1,32 @@
+{% extends "farmer_base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="glass border-danger" style="padding:0;">
+        <div class="p-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size:2rem; color:#c92a2a;"></i>
+          </div>
+          <h4 class="mb-2">Confirm Delete</h4>
+          <p class="text-muted">Are you sure you want to delete <strong>"{{ crop.name }}"</strong>?</p>
+          <p class="text-muted small">This action cannot be undone.</p>
+
+          <form method="POST" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4 me-2">
+              <i class="bi bi-trash"></i> Yes, Delete
+            </button>
+          </form>
+          <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">
+            <i class="bi bi-x-circle"></i> Cancel
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

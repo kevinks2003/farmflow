@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Farmer Dashboard | FarmFlow{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --glass-bg: rgba(255,255,255,0.08);
+      --glass-border: rgba(255,255,255,0.18);
+      --accent: #ec4899; /* pink accent */
+      --muted: #9ca3af;
+    }
+
+    html,body{
+      height:100%;
+    }
+    body {
+      background: linear-gradient(160deg, #085315ff 0%, #0c2414 100%);
+      color: #f9fafb;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height:100%;
+      margin:0;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: rgba(25,135,84,0.95);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+    .navbar-brand, .nav-link, .dropdown-item {
+      color: #fff !important;
+    }
+    .nav-link.active {
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* content container */
+    .content {
+      padding: 2.25rem;
+      max-width:1200px;
+      margin: 2rem auto;
+    }
+
+    /* glass card wrapper */
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      color:#f1f5f9;
+    }
+
+    /* crop cards grid */
+    .cards-grid { 
+      margin-top:1rem; 
+      display:grid; 
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); 
+      gap:1.25rem; 
+    }
+
+    /* crop card */
+    .crop-card { perspective: 1200px; }
+    .crop-card-inner {
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(.2,.9,.2,1), box-shadow .25s;
+      border-radius: 12px;
+      overflow: hidden;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow: 
+        0 8px 20px rgba(0,0,0,0.6), 
+        0 0 12px rgba(236,72,153,0.35); /* pink glow */
+    }
+    .crop-card:hover .crop-card-inner {
+      transform: rotateY(-7deg) translateY(-6px);
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.8), 
+        0 0 20px rgba(236,72,153,0.55), 
+        0 0 45px rgba(236,72,153,0.35); /* stronger pink glow */
+    }
+
+    .crop-media {
+      height:180px;
+      overflow:hidden;
+      background:#111;
+    }
+    .crop-media img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transition: transform .6s ease;
+    }
+    .crop-card:hover .crop-media img {
+      transform: scale(1.06);
+    }
+
+    .crop-body { padding:0.95rem 1rem; flex:1; }
+    .crop-title { font-weight:700; margin-bottom:0.25rem; color:#fff; }
+    .crop-meta { color:var(--muted); font-size:0.95rem; }
+
+    .crop-footer {
+      padding:0.7rem;
+      display:flex;
+      gap:0.6rem;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+
+    /* buttons */
+    .btn-glow {
+      border-radius: 10px;
+      padding:0.4rem .8rem;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(236,72,153,0.5); /* pink glow */
+      background: var(--accent);
+      color:#fff;
+      border:none;
+    }
+    .btn-glow:hover {
+      background:#db2777;
+      color:#fff;
+    }
+
+    /* empty state */
+    .empty-state {
+      text-align:center;
+      color:var(--muted);
+      padding:2.2rem;
+      border-radius:12px;
+      border:1px dashed rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'dashboard' %}">
+        <i class="bi bi-tree"></i> FarmFlow
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarNav" aria-controls="navbarNav"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+               href="{% url 'dashboard' %}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'add_crop' %}active{% endif %}"
+               href="{% url 'add_crop' %}">Add Crop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="container content">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Tiny tilt effect -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.crop-card').forEach(function(card){
+        const inner = card.querySelector('.crop-card-inner');
+        if(!inner) return;
+        card.addEventListener('mousemove', function(e){
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          inner.style.transform = `rotateY(${ -x * 6 }deg) rotateX(${ y * 4 }deg) translateY(-4px)`;
+        });
+        card.addEventListener('mouseleave', function(){
+          inner.style.transform = '';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

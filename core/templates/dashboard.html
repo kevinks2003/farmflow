@@ -1,0 +1,76 @@
+{% extends "farmer_base.html" %}
+
+{% block title %}My Crops | FarmFlow{% endblock %}
+
+{% block content %}
+<div class="glass page-hero">
+  <div class="hero-left">
+    <h2>Welcome, {{ request.user.username }} 👋</h2>
+    <p>Manage your crops. Add new produce, edit details, and keep inventory up to date.</p>
+  </div>
+
+  <div class="hero-right d-flex align-items-center">
+    <div class="stat-chip">
+      <i class="bi bi-list-columns"></i>
+      <span>{{ crops|length }} Crops</span>
+    </div>
+    <a href="{% url 'add_crop' %}" class="btn btn-light btn-glow ms-3">
+      <i class="bi bi-plus-circle"></i> Add Crop
+    </a>
+  </div>
+</div>
+
+{% if crops %}
+  <div class="cards-grid" aria-live="polite">
+    {% for crop in crops %}
+      <div class="crop-card">
+        <div class="crop-card-inner">
+          <a href="{% url 'edit_crop' crop.id %}" style="text-decoration:none;color:inherit;">
+            <div class="crop-media">
+              {% if crop.image %}
+                <img src="{{ crop.image.url }}" alt="{{ crop.name }}">
+              {% else %}
+                <img src="https://via.placeholder.com/500x400.png?text={{ crop.name|urlencode }}" alt="{{ crop.name }}">
+              {% endif %}
+            </div>
+
+            <div class="crop-body">
+              <div class="crop-title">{{ crop.name }}</div>
+              <div class="crop-meta">
+                <div>Quantity: <strong>{{ crop.quantity }}</strong> kg</div>
+                <div class="mt-1">Price: <strong>₹{{ crop.price }} /kg</strong></div>
+                <div class="mt-2 text-muted small">{{ crop.description|default:"No description" }}</div>
+              </div>
+            </div>
+          </a>
+
+          <div class="crop-footer">
+            <div>
+              <a href="{% url 'edit_crop' crop.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil"></i> Edit
+              </a>
+              <a href="{% url 'delete_crop' crop.id %}" class="btn btn-sm btn-outline-danger"
+                 onclick="return confirm('Are you sure you want to delete this crop?');">
+                <i class="bi bi-trash"></i> Delete
+              </a>
+            </div>
+
+            <div class="text-end small text-muted">
+              Added {{ crop.created_at|date:"M j, Y" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="mt-4 empty-state">
+    <i class="bi bi-emoji-frown" style="font-size:2.2rem;"></i>
+    <h5 class="mt-2">No crops yet</h5>
+    <p class="mb-3">You haven't added any crops. Create your first listing to start selling.</p>
+    <a href="{% url 'add_crop' %}" class="btn btn-success btn-lg">
+      <i class="bi bi-plus-circle"></i> Add First Crop
+    </a>
+  </div>
+{% endif %}
+{% endblock %}

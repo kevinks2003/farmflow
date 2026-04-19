@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .email-container {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #28a745;
+    }
+    .details {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6c757d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <h2>📦 New Order Received!</h2>
+
+    <p><strong>Buyer:</strong> {{ buyer.username }}</p>
+    <p><strong>Email:</strong> {{ buyer.email }}</p>
+    <p><strong>Phone:</strong> {{ buyer.phone }}</p>
+    <p><strong>Location:</strong> {{ buyer.place }}, {{ buyer.district }}</p>
+
+    <div class="details">
+      <p><strong>Order ID:</strong> {{ order.id }}</p>
+      <p><strong>Total:</strong> ₹{{ order.total_price }}</p>
+      <p><strong>Status:</strong> {{ order.status }}</p>
+    </div>
+
+    <p>✅ Please assign a transporter to deliver this order.</p>
+
+    <div class="footer">
+      <p>FarmFlow Notification System</p>
+    </div>
+  </div>
+</body>
+</html>

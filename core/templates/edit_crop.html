@@ -1,0 +1,24 @@
+{% extends 'farmer_base.html' %}
+
+{% block title %}Edit Crop | FarmFlow{% endblock %}
+
+{% block content %}
+<div class="glass mx-auto" style="max-width:800px;">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0">Edit Crop</h3>
+    <small class="text-muted">Update details or image</small>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      {{ form.as_p }}
+    </div>
+
+    <div class="mt-3">
+      <button type="submit" class="btn btn-success btn-glow">Save Changes</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

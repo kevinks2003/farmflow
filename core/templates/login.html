@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | FarmFlow{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") center/cover no-repeat;
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+  }
+  .glass-card input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+  }
+  .glass-card input::placeholder {
+    color: #eee;
+  }
+  .btn-primary {
+    border-radius: 25px;
+  }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="col-md-5 glass-card">
+    <h3 class="text-center mb-3">Login</h3>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      <div class="mb-3">
+        <input type="text" name="username" class="form-control" placeholder="Email or Username" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+      </div>
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+
+    <p class="text-center mt-3 small">Don’t have an account? <a href="{% url 'register' %}" class="text-light">Register</a></p>
+  </div>
+</div>
+{% endblock %}

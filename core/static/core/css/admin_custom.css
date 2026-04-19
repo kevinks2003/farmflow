@@ -1,0 +1,21 @@
+/* core/static/core/css/admin_custom.css */
+#header {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+}
+
+.module h2 {
+    color: #198754 !important;
+}
+
+a {
+    color: #198754 !important;
+}
+
+.breadcrumb {
+    background-color: #e9f7ef !important;
+}
+
+.module:hover {
+    background-color: #d1e7dd !important;
+}

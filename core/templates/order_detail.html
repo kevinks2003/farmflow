@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+  <h3>Order #{{ order.id }}</h3>
+  <p>Buyer: {{ order.buyer.username }}</p>
+  <p>Status: {{ order.get_status_display }}</p>
+  <h5>Items</h5>
+  <ul>
+    {% for it in order.items.all %}
+      <li>{{ it.quantity }} x {{ it.crop.name }} — ₹{{ it.total_price }}</li>
+    {% endfor %}
+  </ul>
+  <p>Total: ₹{{ order.total_amount }}</p>
+
+  {% if user == order.transporter %}
+    <form method="post" action="{% url 'update_order_status' order.id %}">
+      {% csrf_token %}
+      <select name="status">
+        <option value="IN_TRANSIT">In Transit</option>
+        <option value="DELIVERED">Delivered</option>
+      </select>
+      <button class="btn btn-primary">Update Status</button>
+    </form>
+  {% endif %}
+{% endblock %}

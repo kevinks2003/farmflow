@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Payment Collected</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        .box { border: 1px solid #ddd; padding: 16px; border-radius: 8px; }
+        h2 { color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>💰 Payment Collected</h2>
+        <p>Hi {{ buyer.username }},</p>
+        <p>The transporter <strong>{{ transporter.username }}</strong> has confirmed that payment for your order <strong>#{{ order.id }}</strong> has been collected (COD).</p>
+        <p><strong>Order Status:</strong> {{ order.status }}</p>
+        <p>Thank you for shopping with <strong>FarmFlow</strong> 🌱</p>
+    </div>
+</body>
+</html>
